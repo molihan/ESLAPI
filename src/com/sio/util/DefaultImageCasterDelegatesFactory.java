@@ -1,7 +1,7 @@
 package com.sio.util;
 
+import com.sio.model.DefaultCastSettingSelector;
 import com.sio.model.DefaultDimensionSelector;
-import com.sio.model.DefaultDirectionChooser;
 import com.sio.model.EWHS_Raster;
 import com.sio.model.HSEW_Raster;
 import com.sio.model.SWHE_Raster;
@@ -11,7 +11,7 @@ public class DefaultImageCasterDelegatesFactory extends
 
 	public DefaultImageCasterDelegatesFactory() {
 		initialPixelRaster();
-		initialDirectionChooser();
+		initialCastSettingSelector();
 		initialDimensionSelector();
 	}
 
@@ -31,8 +31,8 @@ public class DefaultImageCasterDelegatesFactory extends
 	}
 
 	@Override
-	protected void initialDirectionChooser() {
-		directionChooser = new DefaultDirectionChooser();
+	protected void initialCastSettingSelector() {
+		castSettingSelector = new DefaultCastSettingSelector();		
 	}
 
 	@Override
