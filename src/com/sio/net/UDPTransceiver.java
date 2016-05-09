@@ -23,5 +23,8 @@ public interface UDPTransceiver {
 	 * This function will start a new thread that holding ongoing events in a roll poling.
 	 */
 	public void startUDPEvent();
+	/**
+	 * Stop the UDP auto-write and auto-read event
+	 */
 	public void stopUDPEvent();
 }

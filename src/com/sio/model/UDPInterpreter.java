@@ -1,7 +1,7 @@
 package com.sio.model;
 
 public class UDPInterpreter implements Interpreter{
-
+	
 	private int type;
 	private Object obj;
 	
@@ -29,4 +29,5 @@ public class UDPInterpreter implements Interpreter{
 	public void update(byte[] data) {
 		
 	}
+	
 }

@@ -44,7 +44,6 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 		Selector selector = null;
 		try {
 			selector = Selector.open();
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
