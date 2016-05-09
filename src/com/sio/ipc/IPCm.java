@@ -102,7 +102,6 @@ public class IPCm implements Loadable {
 	}
 
 	private class DefaultFileFilter implements FileFilter{
-
 		@Override
 		public boolean accept(File pathname) {
 			if(pathname.getName().endsWith(".class") || pathname.getName().endsWith(".java")){
@@ -110,7 +109,6 @@ public class IPCm implements Loadable {
 			}
 			return false;
 		}
-		
 	}
 
 	@Override
