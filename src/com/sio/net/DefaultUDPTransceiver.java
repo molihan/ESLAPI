@@ -23,7 +23,7 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	private DataReader observable;
 	private ByteBuffer receive_buffer = ByteBuffer.allocate(DEFAULT_BUFFER_SIZE);
 	public DefaultUDPTransceiver() {
-		registration(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+		registration(SelectionKey.OP_READ);
 	}
 
 	@Override

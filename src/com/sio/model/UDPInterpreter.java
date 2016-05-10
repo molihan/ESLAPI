@@ -26,8 +26,9 @@ public class UDPInterpreter implements Interpreter{
 	}
 
 	@Override
-	public void update(byte[] data) {
-		
+	public void update(String ip, int port, byte[] data) {
+		InterpretedTag iTag = new InterpretedTag();
+	
 	}
 	
 }

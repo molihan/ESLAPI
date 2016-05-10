@@ -62,7 +62,7 @@ public class DataReader extends Observable{
 		String ip = src_ip;
 		int port = src_port;
 		this.data = data;
-		for(int x=0; x<data.length; x++){
+		for(int x=0; x<data.length; x++){					//need fix!!!!!!!!!!!!!!
 			GeneratingTag genTag = new GeneratingTag();
 			genTag.setIp(ip);
 			genTag.setPort(port);
@@ -87,11 +87,11 @@ public class DataReader extends Observable{
 		@Override
 		public void run() {
 			interpreter.setType(Interpreter.TYPE_TAG);
-			interpreter.update(data);
+			interpreter.update(getIp(), getPort(), getData());
 			notifyObservers(interpreter);
 		}
 
-		public String getIp() {
+		private String getIp() {
 			return ip;
 		}
 
@@ -99,7 +99,7 @@ public class DataReader extends Observable{
 			this.ip = ip;
 		}
 
-		public int getPort() {
+		private int getPort() {
 			return port;
 		}
 
@@ -107,7 +107,7 @@ public class DataReader extends Observable{
 			this.port = port;
 		}
 		
-		public byte[] getData() {
+		private byte[] getData() {
 			return data;
 		}
 
