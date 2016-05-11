@@ -1,45 +1,10 @@
 package com.sio.model;
 
 import java.nio.ByteBuffer;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DefaultUDPPackaging extends Packaging {
-	private static final byte PRODUCT_CODE_H = 0;
-	private static final byte PRODUCT_CODE_M = 1;
-	private static final byte PRODUCT_CODE_L = 2;
-	private static final byte TOTAL_BYTE_COUNT_H = 3;
-	private static final int TOTAL_BYTE_COUNT_M = 4;
-	private static final int TOTAL_BYTE_COUNT_L = 5;
-	private static final int MAC_6 = 8;
-	private static final int MAC_5 = 9;
-	private static final int MAC_4 = 10;
-	private static final int MAC_3 = 11;
-	private static final int MAC_2 = 12;
-	private static final int MAC_1 = 13;
-	private static final int COMMAND_PROTOCAL_FLAG = 14;
-	private static final int YEAR = 16;
-	private static final int MONTH = 17;
-	private static final int DOF = 18;
-	private static final int DAY = 19;
-	private static final int HOUR = 20;
-	private static final int MINUTE = 21;
-	private static final int SECOND = 22;
-	private static final int COMMAND_FIRST_FLAG = 48;
-	private static final int COMMAND_FIRST_ADD_H = 49;
-	private static final int COMMAND_FIRST_ADD_M = 50;
-	private static final int COMMAND_FIRST_ADD_L = 51;
-	private static final int COMMAND_SECON_FLAG = 52;
-	private static final int COMMAND_SECON_ADD_H = 53;
-	private static final int COMMAND_SECON_ADD_M = 54;
-	private static final int COMMAND_SECON_ADD_L = 55;
-	private static final int COMMAND_THIRD_FLAG = 56;
-	private static final int COMMAND_THIRD_ADD_H = 57;
-	private static final int COMMAND_THIRD_ADD_M = 58;
-	private static final int COMMAND_THIRD_ADD_L = 59;
-	private static final int COMMAND_FORTH_FLAG = 60;
-	private static final int COMMAND_FORTH_ADD_H = 61;
-	private static final int COMMAND_FORTH_ADD_M = 62;
-	private static final int COMMAND_FORTH_ADD_L = 63;
 	
 	public DefaultUDPPackaging() {
 		
@@ -47,15 +12,15 @@ public class DefaultUDPPackaging extends Packaging {
 
 	@Override
 	public void setHead(String mac, long random, Date time) {
-		this.head = new byte[64];
-		//block set product code
+		this.head = new byte[HEAD_DEFAULT_LENGTH];
+//		block set product code
 		{
 			for(int x=PRODUCT_CODE_H; x<=PRODUCT_CODE_L; x++){
 				int y = 2 - x;
 				this.head[x] = (byte) ((random >> (y*8))& 0xFF);
 			}
 		}
-		//block set mac
+//		block set mac
 		{
 			int i = 0;
 			byte[] mac_bytes = from16radixToBytes(mac);
@@ -63,14 +28,91 @@ public class DefaultUDPPackaging extends Packaging {
 				this.head[x] = mac_bytes[i++];
 			}
 		}
-		//block set time
+//		block set time
 		{
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(time);
+			int year = calendar.get(Calendar.YEAR);
+			int month = calendar.get(Calendar.MONTH);
+			int dof = calendar.get(Calendar.DAY_OF_WEEK);
+			int day = calendar.get(Calendar.DAY_OF_MONTH);
+			int hour = calendar.get(Calendar.HOUR_OF_DAY);
+			int minute = calendar.get(Calendar.MINUTE);
+			int second = calendar.get(Calendar.SECOND);
+			this.head[YEAR] = (byte) (year % 1000 % 100);
+			this.head[MONTH] = (byte) (month&0xff);
+			switch(dof){
+			case Calendar.MONDAY:
+				this.head[DOF] = (byte)1;
+				break;
+			case Calendar.TUESDAY:
+				this.head[DOF] = (byte)2;
+				break;
+			case Calendar.WEDNESDAY:
+				this.head[DOF] = (byte)3;
+				break;
+			case Calendar.THURSDAY:
+				this.head[DOF] = (byte)4;
+				break;
+			case Calendar.FRIDAY:
+				this.head[DOF] = (byte)5;
+				break;
+			case Calendar.SATURDAY:
+				this.head[DOF] = (byte)6;
+				break;
+			case Calendar.SUNDAY:
+				this.head[DOF] = (byte)7;
+				break;
+			}
+			this.head[DAY] = (byte) day;
+			this.head[HOUR] = (byte)hour;
+			this.head[MINUTE] = (byte)minute;
+			this.head[SECOND] = (byte)second;
 			
 		}
+		
+//		initialize command flag
+		{
+			ByteBuffer buffer = ByteBuffer.allocate(HEAD_DEFAULT_LENGTH + COMMAND_ROW_LENGTH);
+			buffer.put(head);
+			buffer.put(COMMAND_ROW_INIT);
+		}
 	}
-
+	public static final int ADDRESS_LENGTH = 3;
 	@Override
-	public void setData(byte[] data, int order) {
+	public void setData(byte[] data, byte order) {
+//		edit head
+		{
+			if(head[head.length-4] != _EMPTY_ ){
+				head[head.length-4] |= ORDER_MASK;
+				ByteBuffer buffer = ByteBuffer.allocate(head.length+COMMAND_ROW_LENGTH);
+				buffer.put(head);
+				buffer.put(COMMAND_ROW_INIT);
+				head = buffer.array();
+			}
+			for(int x=COMMAND_FIRST_FLAG; x<head.length; x+=4){
+				if(this.head[x] == _EMPTY_){
+					head[x] = order;
+					int position = 0;
+					if(this.data == null){
+						position = 0;
+						this.data = data;
+					} else {
+						position = this.data.length;
+						ByteBuffer buffer = ByteBuffer.allocate(this.data.length + data.length);
+						buffer.put(this.data);
+						buffer.put(data);
+						this.data = buffer.array();
+					}
+
+					for(int y=0; y<ADDRESS_LENGTH; y++){
+						int i = ADDRESS_LENGTH-y-1;
+						head[x+y+1] = (byte)((position >> (8*i))&0xFF); 
+					}
+					break;
+				}
+			}
+		}
 		
 	}
 	/**
