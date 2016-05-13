@@ -1,5 +1,6 @@
 package com.sio.model;
 
+import java.nio.ByteBuffer;
 import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,6 +12,8 @@ import java.util.concurrent.Executors;
  */
 public class DataReader extends Observable{
 	private static final int THREAD_LIMIT = 1;
+	private static final int A4_PACK_PROTOCAL_LENGTH = 14;
+	private static final byte A4_PACK_PROTOCAL_HEAD = (byte) 0xA4;
 	private static final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_LIMIT);
 
 	private String src_ip;
@@ -62,12 +65,19 @@ public class DataReader extends Observable{
 		String ip = src_ip;
 		int port = src_port;
 		this.data = data;
-		for(int x=0; x<data.length; x++){					//need fix!!!!!!!!!!!!!!
-			GeneratingTag genTag = new GeneratingTag();
-			genTag.setIp(ip);
-			genTag.setPort(port);
-			genTag.setData(data);
-			threadPool.execute(genTag);
+		
+		if(data[0] == A4_PACK_PROTOCAL_HEAD){
+			if((data.length-1) % A4_PACK_PROTOCAL_LENGTH == 0){
+				for(int x=1; x<data.length; x+=A4_PACK_PROTOCAL_LENGTH){
+					ByteBuffer buf = ByteBuffer.allocate(A4_PACK_PROTOCAL_LENGTH);
+					buf.put(data,x,A4_PACK_PROTOCAL_LENGTH);
+					GeneratingTag genTag = new GeneratingTag();
+					genTag.setIp(ip);
+					genTag.setPort(port);
+					genTag.setData(buf.array());
+					threadPool.execute(genTag);
+				}
+			}
 		}
 	}
 

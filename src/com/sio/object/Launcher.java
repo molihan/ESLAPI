@@ -15,6 +15,11 @@ public class Launcher {
 	private static final String RELEASE_DATE = "2016-03-30";
 	
 	public static void main(String[] args) {
+		
+		new Launcher();
+	}
+	
+	public Launcher() {
 		{	
 			//create a concrete model
 			UtilityProvider.getInstance().initUtility(new AccessPointUtility());
@@ -50,7 +55,5 @@ public class Launcher {
 			System.out.println("released date: " + RELEASE_DATE);
 //			commandLine.startGatherCommand();
 		}
-		
-		
 	}
 }

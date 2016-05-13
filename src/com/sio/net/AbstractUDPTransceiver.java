@@ -1,19 +1,29 @@
 package com.sio.net;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 
 public abstract class AbstractUDPTransceiver implements UDPTransceiver{
+	protected static final int SELECTION_READ = SelectionKey.OP_READ;
+	protected static final int SELECTION_WRITE = SelectionKey.OP_WRITE;
 	private static final String IOEXCEPTION_UNINITIALED_CHANNEL = "DatagramChannel not initialized";
 	protected final String BROADCAST_ADDRESS = "255.255.255.255";
 	
-	protected DatagramChannel datagramChannel = initialChannelHook();
-	protected Selector selector = initialSelectorHook();
+	protected DatagramChannel datagramChannel;
+	protected Selector selector;
 	protected boolean isRunning;
+	
+	public AbstractUDPTransceiver() {
+		datagramChannel = initialChannelHook();
+		selector = initialSelectorHook();
+	}
 	
 	/**
 	 * CHN:这是一个钩子函数，必须在子类重写来完成初始化，无需手动调用
@@ -47,7 +57,9 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	public final void startUDPEvent(){
 		if(!isRunning){
 			isRunning = true;
-			new Thread(new EventRunnable()).start();
+			Thread t = new Thread(new EventRunnable());
+			t.start();
+			
 		}
 		
 	}
@@ -57,6 +69,7 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	@Override
 	public final void stopUDPEvent(){
 		isRunning = false;
+		finalize();
 	}
 	/**
 	 * 内部线程类
@@ -71,6 +84,7 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 			while(isRunning){
 				onEventCallBack(datagramChannel, selector);
 			}
+			
 		}
 	}
 	
@@ -109,5 +123,43 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 			e.printStackTrace();
 		}
 		
+	}
+	
+	// 获取通信端口号
+	protected int getPort() { 
+		DatagramSocket s = null;//为UDP编程中的Socket类,只可以判断UDP占用的端口
+		// 测试两个值之间的端口号
+		int MINPORT = 2048;
+		int MAXPORT = 65000;
+	
+		for (; MINPORT < MAXPORT; MINPORT+=8) {
+	
+			try {
+				// 第二个为测试本机IP,测试其它机器,则构建一个InetAddress对象
+				s = new DatagramSocket(MINPORT, InetAddress.getLocalHost());
+				s.close();
+				return MINPORT;
+			} catch (IOException e) {
+				// 如果报错就说明报错了,继续测试上面的.
+				continue;
+			}
+	
+		}
+	
+		// 如果都在用就返回-1
+		return -1;
+	}
+	
+	public void finalize(){
+		try {
+			datagramChannel.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			selector.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

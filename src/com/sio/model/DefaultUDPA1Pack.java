@@ -4,11 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DefaultUDPPackaging extends Packaging {
-	
-	public DefaultUDPPackaging() {
-		
-	}
+public class DefaultUDPA1Pack extends Packer {
 
 	@Override
 	public void setHead(String mac, long random, Date time) {
@@ -40,7 +36,7 @@ public class DefaultUDPPackaging extends Packaging {
 			int minute = calendar.get(Calendar.MINUTE);
 			int second = calendar.get(Calendar.SECOND);
 			this.head[YEAR] = (byte) (year % 1000 % 100);
-			this.head[MONTH] = (byte) (month&0xff);
+			this.head[MONTH] = (byte) (month+1&0xff);
 			switch(dof){
 			case Calendar.MONDAY:
 				this.head[DOF] = (byte)1;
@@ -76,11 +72,12 @@ public class DefaultUDPPackaging extends Packaging {
 			ByteBuffer buffer = ByteBuffer.allocate(HEAD_DEFAULT_LENGTH + COMMAND_ROW_LENGTH);
 			buffer.put(head);
 			buffer.put(COMMAND_ROW_INIT);
+			this.head = buffer.array();
 		}
 	}
 	public static final int ADDRESS_LENGTH = 3;
 	@Override
-	public void setData(byte[] data, byte order) {
+	public void setData(byte order, byte[] data) {
 //		edit head
 		{
 			if(head[head.length-4] != _EMPTY_ ){
@@ -119,7 +116,22 @@ public class DefaultUDPPackaging extends Packaging {
 	 * Merge
 	 */
 	private void merge(){
-		
+//		fix position (add head.length)
+		{
+			for(int x=COMMAND_FIRST_FLAG; x<head.length;x++){
+				int position = 0;
+				for(int y=0; y<ADDRESS_LENGTH; y++){
+					x++;
+					position |= head[x];
+					if(y<ADDRESS_LENGTH-1)	position <<= 8;
+				}
+				position += head.length;
+				for(int y=x-2; y<=x; y++){
+					int i = ADDRESS_LENGTH-y-1;
+					head[y] = (byte)((position >> (8*i))&0xFF); 
+				}
+			}
+		}
 	}
 	
 	public byte[] getByte(){

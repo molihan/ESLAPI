@@ -2,7 +2,7 @@ package com.sio.model;
 
 import java.util.Date;
 
-public abstract class Packaging {
+public abstract class Packer {
 	protected static final int HEAD_DEFAULT_LENGTH = 48;
 	protected static final byte PRODUCT_CODE_H = 0;
 	protected static final byte PRODUCT_CODE_M = 1;
@@ -45,14 +45,11 @@ public abstract class Packaging {
 	
 	protected byte[] head;
 	protected byte[] data;
-	public Packaging() {
-		
-	}
 	
 	public abstract void setHead(String mac, long random, Date time);
-	public abstract void setData(byte[] data, byte order);
+	public abstract void setData(byte order, byte[] data);
 	
-	protected final byte[] from16radixToBytes(String s) {
+	public static final byte[] from16radixToBytes(String s) {
 		byte[] b = new byte[s.length() / 2];
 		int startpoint = 0;
 		int endpoint = 2;
@@ -65,7 +62,7 @@ public abstract class Packaging {
 		return b;
 	}
 	
-	public String fromBytesTo16radix(byte[] b){
+	public static final String fromBytesTo16radix(byte[] b){
 		if (b != null && b.length > 0) {
 			final StringBuilder stringBuilder = new StringBuilder(b.length);
 				for(byte byteChar : b)

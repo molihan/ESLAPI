@@ -18,7 +18,7 @@ public class DefaultUDPTransceiverFactory implements UDPConnectionFactory{
 
 	@Override
 	public UDPTransceiver createUDPTransceiver() {
-		DefaultUDPTransceiver transceiver = new DefaultUDPTransceiver();	//create transceiver
+		DefaultUDPTransceiver transceiver = new DefaultUDPTransceiver();	//create transceiver READ
 		DataReader observable = new DataReader();							//create reader
 		Interpreter interpreter = new UDPInterpreter();						//create interpreter
 		observable.addObserver(UtilityProvider.getUtility());

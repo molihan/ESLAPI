@@ -1,6 +1,8 @@
 *.class
 *.project
 *.classpath
+*.log
+*.logs
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 

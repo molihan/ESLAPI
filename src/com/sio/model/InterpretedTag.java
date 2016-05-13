@@ -2,15 +2,15 @@ package com.sio.model;
 
 public class InterpretedTag implements Tag{
 
-	private String mac;
-	private int model;
-	private int signal;
-	private String apIP;
-	private int battary;
-	private long code_1;
-	private int code_2;
-	private boolean error;
-	private boolean on;
+	public String mac;
+	public int model;
+	public int signal;
+	public String apIP;
+	public int battary;
+	public long code_1;
+	public int code_2;
+	public boolean error;
+	public boolean on;
 	
 	@Override
 	public String mac() {
