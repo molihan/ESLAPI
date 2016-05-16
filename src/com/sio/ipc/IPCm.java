@@ -104,6 +104,9 @@ public class IPCm implements Loadable {
 	private class DefaultFileFilter implements FileFilter{
 		@Override
 		public boolean accept(File pathname) {
+			if(pathname.getName().contains("$")){
+				return false;
+			}
 			if(pathname.getName().endsWith(".class") || pathname.getName().endsWith(".java")){
 				return true;
 			}

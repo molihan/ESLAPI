@@ -28,14 +28,14 @@ public class DataReader extends Observable{
 	 * JavaBean ip getter
 	 * DO NOT SUGGEST TO CALL.
 	 * PLEASE GET FROM Interpreter class.
-	 * @return
+	 * @return ip address
 	 */
 	public String getSrc_ip() {
 		return src_ip;
 	}
 	/**
 	 * JavaBean ip setter
-	 * @param src_ip
+	 * @param src_ip ip address
 	 */
 	public void setSrc_ip(String src_ip) {
 		this.src_ip = src_ip;
@@ -44,7 +44,7 @@ public class DataReader extends Observable{
 	 * JavaBean port number getter. 
 	 * DO NOT SUGGEST TO CALL.
 	 * PLEASE GET FROM Interpreter class.
-	 * @return
+	 * @return port
 	 */
 	public int getSrc_port() {
 		return src_port;
@@ -59,7 +59,7 @@ public class DataReader extends Observable{
 	}
 	/**
 	 * Raw data
-	 * @param data
+	 * @param data raw data
 	 */
 	public void setData(byte[] data) {
 		String ip = src_ip;

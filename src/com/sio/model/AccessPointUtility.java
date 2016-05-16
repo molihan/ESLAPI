@@ -34,23 +34,24 @@ public final class AccessPointUtility implements DeviceUtility{
 				if(!accesspoints.contains(ap)){
 					accesspoints.add(ap);
 				}
+				WirelessTag tag = new DefaultUDPTag();
+				InterpretedTag iTag = null;
+				if(arg instanceof InterpretedTag){
+					iTag = (InterpretedTag) arg;
+				}
+				tag.setMac(iTag.mac());
+				tag.setTag(iTag);
 				for(AbstractAccessPoint accesspoint : accesspoints){
 					if(accesspoint.equals(ap)){
-						WirelessTag tag = new DefaultUDPTag();
-						InterpretedTag iTag = null;
-						if(arg instanceof InterpretedTag){
-							iTag = (InterpretedTag) arg;
-						} else {
-							System.out.println(arg);
-						}
-						tag.setMac(iTag.mac());
-						tag.setTag(iTag);
 						if(accesspoint.contains(tag)){
 							accesspoint.getTag(iTag.mac()).setTag(iTag);	//refresh data
 						} else {
 							accesspoint.addTag(tag);
 						}
-						
+					} else {
+						if(accesspoint.contains(tag)){
+							accesspoint.removeTag(tag);
+						}
 					}
 				}
 			}

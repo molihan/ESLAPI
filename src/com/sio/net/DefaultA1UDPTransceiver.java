@@ -117,7 +117,7 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 		this.queue = queue;
 	}
 
-	public void addA1Packet(String ip, byte[]data){
+	public void addSendPacket(String ip, byte[]data){
 		DefaultUDPAtomicData aData = new DefaultUDPAtomicData();
 		aData.setIp(ip);
 		aData.setPort(_COM_PORT_);
