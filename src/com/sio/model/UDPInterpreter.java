@@ -59,10 +59,8 @@ public class UDPInterpreter implements Interpreter{
 		iTag.model = data[LCDTYPE];
 //		dbm
 		iTag.signal = data[SIGNAL];
-		System.out.println("获得价签 ip: " + iTag.apIP() + " mac地址： " 
-				+ iTag.mac() + " 开关状态： " + iTag.on() + " 错误存在: " + iTag.error() + " 电量: " + iTag.battary() + " 编号： " 
-				+ iTag.code_1() + " 睡眠时间： " + iTag.code_2() 
-				+ " 类型： " + iTag.model() + " 信号质量： " + iTag.signal());
+		
+		setPrototype(iTag);
 	}
 	
 }

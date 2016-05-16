@@ -122,11 +122,10 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	// 获取通信端口号
-	protected int getPort() { 
+	protected int getFreePort() { 
 		DatagramSocket s = null;//为UDP编程中的Socket类,只可以判断UDP占用的端口
 		// 测试两个值之间的端口号
 		int MINPORT = 2048;

@@ -15,7 +15,7 @@ public class Launcher {
 	private static final String RELEASE_DATE = "2016-03-30";
 	
 	public static void main(String[] args) {
-		
+
 		new Launcher();
 	}
 	

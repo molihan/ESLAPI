@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 public class DefaultPackSheer implements PackSheer {
 	private static final byte _HEAD= (byte) 0xFE;
+	public static final byte SEND_PROTOCAL = (byte) 0xA1;
 	private int raw_size = 0;
 	private int total_pack = 0;
 	private int current_pack = 0;

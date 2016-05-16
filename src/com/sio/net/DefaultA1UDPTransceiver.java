@@ -20,6 +20,7 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 	private static final String UDP_PORT_OCCUPIED_ERROR = "ALL UDP PORT IS OCCUPIED.";
 	private static final int BUFFER_DEFAULT_SIZE = 1024;
 	private static final int SECOND_IN_MILLIS = 1000;
+	private static final int _COM_PORT_ = 15167;
 //	A1 resend
 	private static final long A1_RESEND_IN_MILLIS = (long) (0.5*SECOND_IN_MILLIS);
 	
@@ -38,7 +39,7 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 		DatagramChannel channel = null;
 		try {
 			channel = DatagramChannel.open();
-			standard_port = getPort();
+			standard_port = getFreePort();
 			channel.bind(new InetSocketAddress(standard_port));
 			channel.configureBlocking(false);
 		} catch (IOException e) {
@@ -112,5 +113,16 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 		
 	}
 	
+	public void setQueue(List<DefaultUDPAtomicData> queue){
+		this.queue = queue;
+	}
 
+	public void addA1Packet(String ip, byte[]data){
+		DefaultUDPAtomicData aData = new DefaultUDPAtomicData();
+		aData.setIp(ip);
+		aData.setPort(_COM_PORT_);
+		aData.setSendType(DefaultUDPAtomicData.SEND_UDP);
+		aData.setData(data);
+		queue.add(aData);
+	}
 }

@@ -98,7 +98,8 @@ public class DataReader extends Observable{
 		public void run() {
 			interpreter.setType(Interpreter.TYPE_TAG);
 			interpreter.update(getIp(), getPort(), getData());
-			notifyObservers(interpreter);
+			setChanged();
+			notifyObservers(interpreter.getPrototype());
 		}
 
 		private String getIp() {

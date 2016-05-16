@@ -7,6 +7,7 @@ package com.sio.model;
 public interface PackSheer {
 	public static final int DEFAULT_HEAD_SIZE = 9;
 	public static final int DEFAULT_PACK_SIZE = 512;
+	
 	/**
 	 * 
 	 * @param raw source data.
