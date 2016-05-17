@@ -1,3 +1,4 @@
 20160511:	添加/实现DefaultUDPPackfing的函数方法，测试通过setHead和setData
 20160513:	添加a5 a4 udp线程和 a1线程，完成大部分通讯工作，解析a4， 广播a5
 20160516:	完成a4的反馈，添加到AccessPointUtility，进入a1分支开发
+20160517:	完成a1的send b/w，对打包进行bug修复， 添加压缩算法。

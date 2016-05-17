@@ -15,7 +15,7 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	protected static final int SELECTION_WRITE = SelectionKey.OP_WRITE;
 	private static final String IOEXCEPTION_UNINITIALED_CHANNEL = "DatagramChannel not initialized";
 	protected final String BROADCAST_ADDRESS = "255.255.255.255";
-	
+	private static int stepPort = 2048;
 	protected DatagramChannel datagramChannel;
 	protected Selector selector;
 	protected boolean isRunning;
@@ -128,7 +128,7 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	protected int getFreePort() { 
 		DatagramSocket s = null;//为UDP编程中的Socket类,只可以判断UDP占用的端口
 		// 测试两个值之间的端口号
-		int MINPORT = 2048;
+		int MINPORT = stepPort;
 		int MAXPORT = 65000;
 	
 		for (; MINPORT < MAXPORT; MINPORT+=8) {
@@ -137,6 +137,12 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 				// 第二个为测试本机IP,测试其它机器,则构建一个InetAddress对象
 				s = new DatagramSocket(MINPORT, InetAddress.getLocalHost());
 				s.close();
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				stepPort = MINPORT;
 				return MINPORT;
 			} catch (IOException e) {
 				// 如果报错就说明报错了,继续测试上面的.

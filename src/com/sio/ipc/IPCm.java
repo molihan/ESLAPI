@@ -10,8 +10,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
+
 import com.sio.plugin.Terminal;
 
 public class IPCm implements Loadable {
@@ -48,17 +50,28 @@ public class IPCm implements Loadable {
 		            	className = className.substring(0, className.indexOf("."));
 						if(!classes.containsKey(className)){
 							if (classFile.isDirectory()) {  
-				                stack.push(classFile);  
+//				                stack.push(classFile);		//iteration
 				            } else {
 				            	if(classFile.getName().endsWith(".class")){
 				            		Class<?> c = loader.loadClass(className);
-				            		classes.put(className, c);
+				            		if(Terminal.class.isAssignableFrom(c)){
+				            			classes.put(className, c);
+				            			System.out.println("load plugin.[" + c.getName() + "]");
+			            			} else {
+			            				System.out.println("found incompatible plugin.[" + c.getName() + "]");
+			            			}
+				            		
 				            	} else if (classFile.getName().endsWith(".java")){
 				            		int err = compiler.run(System.in, System.out, System.err, classFile.getCanonicalPath());
 				            		if(err == 0){
 				            			System.out.println("compiled file: " + classFile.getCanonicalPath());
 				            			Class<?> c =  loader.loadClass(className);
-				            			classes.put(className, c);
+				            			if(Terminal.class.isAssignableFrom(c)){
+				            				classes.put(className, c);
+				            				System.out.println("load plugin.[" + c.getName() + "]");
+				            			} else {
+				            				System.out.println("found incompatible plugin.[" + c.getName() + "]");
+				            			}
 				            		}
 				            	}
 				            }

@@ -9,9 +9,7 @@ import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.log4j.Logger;
-
 import com.sio.model.DefaultUDPAtomicData;
 
 public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
@@ -104,13 +102,11 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 
 	private void read(DatagramChannel channel) throws IOException {
 		buf.clear();
-		InetSocketAddress address = (InetSocketAddress) channel.receive(buf);
-		String ip = address.getAddress().getHostAddress();
-		int port = address.getPort();
-		System.out.println(ip + " :" + port + " -> " + buf.array().length);
-
+		channel.receive(buf);
+		buf.flip();
+		byte[] data = new byte[buf.remaining()];
+		buf.get(data);
 		queue.remove(0);
-		
 	}
 	
 	public void setQueue(List<DefaultUDPAtomicData> queue){

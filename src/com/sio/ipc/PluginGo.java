@@ -41,6 +41,7 @@ public class PluginGo implements PluginThread {
 					}
 				};
 				threadPool.execute(runnable);
+				
 			}
 		}
 	}
@@ -70,6 +71,7 @@ public class PluginGo implements PluginThread {
 							}
 						};
 						threadPool.execute(runnable);
+						
 					}
 				}
 			}
