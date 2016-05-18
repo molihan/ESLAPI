@@ -24,6 +24,7 @@ public class DefaultUDPTag extends WirelessTag {
 			a1udp.addSendPacket(getTag().apIP(), sheer.getPack());
 		}
 		a1udp.startUDPEvent();
+		communication = SENDING;
 	}
 
 }

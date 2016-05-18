@@ -3,6 +3,7 @@ package com.sio.net;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
@@ -29,6 +30,9 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	private static final int SECOND_IN_MILLIS = 1000;
 	private static final int A5_REND = 5;
 	private static final String UDP_PORT_OCCUPIED_ERROR = "ALL UDP PORT IS OCCUPIED.";
+	private static final String PROP_FILE_CONTENT = 	"#Set a default standing IP address. If you have more than one network cards set the value to the right route."
+													+	"#Set this to 'auto' if you have no idea what to do. "
+													+	"ip=auto";
 	private static final int INVALID_ARG_FLAG = -1;
 	private static final int _COM_PORT_ = 15167;
 	private static String standard_ip;
@@ -57,6 +61,11 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 		} else {
 			try {
 				props_file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try(FileWriter writer = new FileWriter(props_file)){
+				writer.write(PROP_FILE_CONTENT);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -9,10 +9,12 @@ import java.util.concurrent.Executors;
 import com.sio.plugin.Terminal;
 
 public class PluginGo implements PluginThread {
+	private static final int EXECUTIONS = 8;
 	private static final int THREAD_LIMIT = 10;
 	private static final int THREAD_PRIOPRITY = Thread.MIN_PRIORITY;
 	private IPCm ipc = IPCm.instance;
 	private ExecutorService threadPool;
+	private double thread_interval;
 	private Iterator<Terminal> _terminal_;
 	private boolean pluginRunning;
 	public PluginGo() {
@@ -54,8 +56,17 @@ public class PluginGo implements PluginThread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 		{
 			Collection<Terminal> terminals = ipc.getLoadedTerminals().values();
+//			calculate simple rest
+			{
+				if(terminals != null && terminals.size()>0){
+					thread_interval = (THREAD_LIMIT/terminals.size()) * (100/THREAD_LIMIT)*0.01;		//performance
+					thread_interval = (1000/EXECUTIONS)*thread_interval;
+				}
+			}
+			
 			_terminal_ = terminals.iterator();	//init itorator
 			if(terminals.size()>0){
 				for(int i=0; i<THREAD_LIMIT; i++){
@@ -67,15 +78,18 @@ public class PluginGo implements PluginThread {
 								while(pluginRunning){
 									Terminal terminal = runOptions();
 									runEvent(terminal);
+									try {
+										Thread.sleep((long) thread_interval);
+									} catch (InterruptedException e) {
+										e.printStackTrace();
+									}
 								}
 							}
 						};
 						threadPool.execute(runnable);
-						
 					}
 				}
 			}
-			
 		}
 	}
 	
