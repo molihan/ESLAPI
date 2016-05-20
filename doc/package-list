@@ -3,7 +3,6 @@ com.sio.ipc
 com.sio.ipc.test
 com.sio.model
 com.sio.net
-com.sio.net.test
 com.sio.object
 com.sio.util
 com.sio.util.test

@@ -30,8 +30,8 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	private static final int SECOND_IN_MILLIS = 1000;
 	private static final int A5_REND = 5;
 	private static final String UDP_PORT_OCCUPIED_ERROR = "ALL UDP PORT IS OCCUPIED.";
-	private static final String PROP_FILE_CONTENT = 	"#Set a default standing IP address. If you have more than one network cards set the value to the right route."
-													+	"#Set this to 'auto' if you have no idea what to do. "
+	private static final String PROP_FILE_CONTENT = 	"#Set a default standing IP address. If you have more than one network cards set the value to the right route.\r\n"
+													+	"#Set this to 'auto' if you have no idea what to do.\r\n"
 													+	"ip=auto";
 	private static final int INVALID_ARG_FLAG = -1;
 	private static final int _COM_PORT_ = 15167;
@@ -45,9 +45,9 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 //	Logger
 	private static final Logger logger = Logger.getLogger(DefaultUDPTransceiver.class);
 //	Properties
-	private static final Properties props = new Properties();
+	public static final Properties props = new Properties();
 	private static final File props_file = new File("./net.ini");
-	private static final String KEY_IP = "ip";
+	public static final String KEY_IP = "ip";
 	
 	static {
 		if(props_file.exists()){
@@ -91,7 +91,7 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 		DatagramChannel channel = null;
 		try {
 			channel = DatagramChannel.open();
-			standard_port = getFreePort();
+			standard_port = getFreePort(standard_ip);
 			channel.bind(new InetSocketAddress(standard_ip,standard_port));
 			channel.configureBlocking(false);
 		} catch (IOException e) {

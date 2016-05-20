@@ -1,19 +1,24 @@
 package com.sio.net;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.log4j.Logger;
+
 import com.sio.model.DefaultUDPAtomicData;
 
 public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
-	private static final boolean _DEBUG_ = true;
+	private static final boolean _DEBUG_ = false;
 	private static final int INVALID_ARG_FLAG = -1;
 	private static final String UDP_PORT_OCCUPIED_ERROR = "ALL UDP PORT IS OCCUPIED.";
 	private static final int BUFFER_DEFAULT_SIZE = 1024;
@@ -33,23 +38,39 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 	}
 
 	@Override
-	protected DatagramChannel initialChannelHook() {
+	protected synchronized DatagramChannel initialChannelHook() {
 		DatagramChannel channel = null;
+		String standard_ip = null;
+//		fix ip
+		{
+			standard_ip = DefaultUDPTransceiver.props.getProperty(DefaultUDPTransceiver.KEY_IP);
+			if(standard_ip == null || standard_ip.length() < 7){
+				try {
+					standard_ip = Inet4Address.getLocalHost().getHostAddress();
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		try {
 			channel = DatagramChannel.open();
-			standard_port = getFreePort();
-			channel.bind(new InetSocketAddress(standard_port));
+			standard_port = getFreePort(standard_ip);
+			if(_DEBUG_){
+				System.out.println("found free port: " + standard_port + " @ip -> " + standard_ip);
+				System.out.println("################################START#######################" + new Date());
+			}
+			channel.bind(new InetSocketAddress(standard_ip, standard_port));
 			channel.configureBlocking(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		if(standard_port == INVALID_ARG_FLAG){
 			logger.error(UDP_PORT_OCCUPIED_ERROR);
 			System.exit(INVALID_ARG_FLAG);
 		}
-		if(_DEBUG_){
-			System.out.println("send udp is on port " + standard_port);
-		}
+		
 		return channel;
 	}
 
@@ -89,6 +110,9 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 			}
 		} else {
 			stopUDPEvent();
+			if(_DEBUG_){
+				System.out.println("################################STOP#######################");
+			}
 		}
 	}
 

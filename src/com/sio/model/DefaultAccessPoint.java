@@ -12,7 +12,7 @@ public class DefaultAccessPoint extends AbstractAccessPoint {
 
 		a1udp.addSendPacket(getIp(), CLEAR_COMMAND);
 		
-		a1udp.startUDPEvent();
+		a1udp.startUDPEvent(false);
 
 	}
 

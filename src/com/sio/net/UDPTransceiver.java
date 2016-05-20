@@ -21,8 +21,10 @@ public interface UDPTransceiver {
 	
 	/**
 	 * This function will start a new thread that holding ongoing events in a roll poling.
+	 * @param synchronize If its true this thread will auto join the the caller's thread. If false, The function will not block.
+	 * @return The process thread this function made.
 	 */
-	public void startUDPEvent();
+	public Thread startUDPEvent(boolean synchronize);
 	/**
 	 * Stop the UDP auto-write and auto-read event
 	 */

@@ -58,7 +58,7 @@ public class APIService {
 //			commandLine.startGatherCommand();
 			
 			//UDP Ongoing
-			transceiver.startUDPEvent();
+			transceiver.startUDPEvent(false);
 		}
 	}
 }

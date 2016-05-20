@@ -3,3 +3,4 @@
 20160516:	完成a4的反馈，添加到AccessPointUtility，进入a1分支开发
 20160517:	完成a1的send b/w，对打包进行bug修复， 添加压缩算法。
 20160518:	完成pluggo线程调优，simple rest， 测试通过xml插件。
+20160520:	完成大部分调试，模板功能尚未调通，reset模板未制作，BindException需要修改，仍然存在问题！Generable需要整合到模板工厂里。

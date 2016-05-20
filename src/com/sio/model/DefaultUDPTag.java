@@ -16,15 +16,15 @@ public class DefaultUDPTag extends WirelessTag {
 	 * 
 	 */
 	@Override
-	public synchronized void write(byte[] data) {
+	public void write(byte[] data) {
 		PackSheer sheer = new DefaultPackSheer();
 		sheer.putData(DefaultPackSheer.SEND_PROTOCAL, data);
 		DefaultA1UDPTransceiver a1udp = new DefaultA1UDPTransceiver();
 		while(sheer.hasNext()){
 			a1udp.addSendPacket(getTag().apIP(), sheer.getPack());
 		}
-		a1udp.startUDPEvent();
+		a1udp.startUDPEvent(true);
 		communication = SENDING;
-	}
 
+	}
 }
