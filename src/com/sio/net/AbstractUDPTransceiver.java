@@ -21,8 +21,7 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	protected boolean isRunning;
 	
 	public AbstractUDPTransceiver() {
-		datagramChannel = initialChannelHook();
-		selector = initialSelectorHook();
+
 	}
 	
 	/**
@@ -36,9 +35,12 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	 */
 	protected abstract Selector initialSelectorHook();
 	/**
+	 * This function must call in onEventCallBack() method block
+	 * <br> or after-ward.<br>
+	 * <b>DO NOT CALL IN CONSTRUCTION AND INITIALHOOKS</b>
 	 * CHN:注册关注事件。
 	 */
-	protected void registration(int selectionKey){
+	protected final void registration(int selectionKey){
 		try {
 			datagramChannel.register(selector, selectionKey);
 		} catch (ClosedChannelException e) {
@@ -56,6 +58,9 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	 */
 	@Override
 	public final Thread startUDPEvent(boolean synchronize){
+		datagramChannel = initialChannelHook();
+		selector = initialSelectorHook();
+		
 		Thread t = null;
 		if(!isRunning){
 			isRunning = true;
@@ -142,14 +147,10 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 		for (; MINPORT < MAXPORT; MINPORT+=8) {
 			// 第二个为测试本机IP,测试其它机器,则构建一个InetAddress对象
 			try {
+				
 				DatagramSocket s = new DatagramSocket(new InetSocketAddress(ip, MINPORT));
 				s.close();
 				s = null;
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				return MINPORT;
 			} catch (BindException e) {
 				// 如果报错就说明报错了,继续测试上面的.
@@ -164,16 +165,52 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 		return -1;
 	}
 	
-	public void finalize(){
+	public DatagramChannel getFreeChannel(String ip){
+		DatagramChannel ch = null;
+		int MINPORT = 2048;
+		int MAXPORT = 65000;
+		
 		try {
+			ch = DatagramChannel.open();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+		
+		for (; MINPORT < MAXPORT; MINPORT+=8) {
+			// 第二个为测试本机IP,测试其它机器,则构建一个InetAddress对象
+			try {
+				
+				ch.bind(new InetSocketAddress(ip, MINPORT));
+				return ch;
+			} catch (BindException e) {
+				// 如果报错就说明报错了,继续测试上面的.
+				continue;
+			} catch (SocketException e1) {
+				e1.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
+		}
+		return ch.isConnected()?ch:null;
+	}
+	
+	public void finalize(){
+		if(datagramChannel != null && datagramChannel.isOpen())
+		try {
+			datagramChannel.disconnect();
+			datagramChannel.socket().close();
 			datagramChannel.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		datagramChannel = null;
+		if(selector != null && selector.isOpen())
 		try {
 			selector.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		selector = null;
 	}
 }

@@ -2,7 +2,6 @@ package com.sio.net;
 
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -13,32 +12,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 import com.sio.model.DefaultUDPAtomicData;
 
 public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 	private static final boolean _DEBUG_ = false;
-	private static final int INVALID_ARG_FLAG = -1;
-	private static final String UDP_PORT_OCCUPIED_ERROR = "ALL UDP PORT IS OCCUPIED.";
 	private static final int BUFFER_DEFAULT_SIZE = 1024;
 	private static final int SECOND_IN_MILLIS = 1000;
 	private static final int _COM_PORT_ = 15167;
+	private boolean isFirstPack = true;
 //	A1 resend
 	private static final long A1_RESEND_IN_MILLIS = (long) (0.5*SECOND_IN_MILLIS);
 	
 	private ByteBuffer buf = ByteBuffer.allocate(BUFFER_DEFAULT_SIZE);
-	private int standard_port = INVALID_ARG_FLAG;
 	private List<DefaultUDPAtomicData> queue = new ArrayList<>();
 //	logger
-	private static final Logger logger = Logger.getLogger(DefaultA1UDPTransceiver.class);
+//	private static final Logger logger = Logger.getLogger(DefaultA1UDPTransceiver.class);
 	
 	public DefaultA1UDPTransceiver() {
-		registration(SELECTION_WRITE);
+		
 	}
 
 	@Override
-	protected synchronized DatagramChannel initialChannelHook() {
+	protected DatagramChannel initialChannelHook() {
 		DatagramChannel channel = null;
 		String standard_ip = null;
 //		fix ip
@@ -53,24 +48,16 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 			}
 		}
 		
+		if(_DEBUG_){
+			System.out.println("found free port: " + " @ip -> " + standard_ip);
+			System.out.println("################################START#######################" + new Date());
+		}
+		channel = getFreeChannel(standard_ip);
 		try {
-			channel = DatagramChannel.open();
-			standard_port = getFreePort(standard_ip);
-			if(_DEBUG_){
-				System.out.println("found free port: " + standard_port + " @ip -> " + standard_ip);
-				System.out.println("################################START#######################" + new Date());
-			}
-			channel.bind(new InetSocketAddress(standard_ip, standard_port));
 			channel.configureBlocking(false);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
-		if(standard_port == INVALID_ARG_FLAG){
-			logger.error(UDP_PORT_OCCUPIED_ERROR);
-			System.exit(INVALID_ARG_FLAG);
-		}
-		
+		}	
 		return channel;
 	}
 
@@ -88,6 +75,11 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 	@Override
 	protected void onEventCallBack(DatagramChannel datagramChannel,
 			Selector selector) {
+		if(isFirstPack){
+			registration(SELECTION_WRITE);
+			isFirstPack = false;
+		}
+		
 		if(queue.size()>0){
 			try {
 //				如果一秒没收到a1则重发
@@ -120,8 +112,8 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 		if(queue.size()>0){
 			DefaultUDPAtomicData pack = queue.get(0);
 			write(pack.getIp(), pack.getPort(), pack.getData());
+			registration(SELECTION_READ);
 		}
-		registration(SELECTION_READ);
 	}
 
 	private void read(DatagramChannel channel) throws IOException {
@@ -131,6 +123,7 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 		byte[] data = new byte[buf.remaining()];
 		buf.get(data);
 		queue.remove(0);
+		registration(SELECTION_WRITE);
 	}
 	
 	public void setQueue(List<DefaultUDPAtomicData> queue){
