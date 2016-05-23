@@ -5,3 +5,7 @@
 20160518:	完成pluggo线程调优，simple rest， 测试通过xml插件。
 20160520:	完成大部分调试，模板功能尚未调通，reset模板未制作，BindException需要修改，仍然存在问题！Generable需要整合到模板工厂里。
 20160520:	修复了BindException异常，将init函数调用位置移动，增加了方法getFreeChannel，通过直接返回channel不重建立的方式。与此同时把资源回收finalize增加.close .disconnect调用。
+20160523:	9:11	将进一步修改模板，尝试调通模板的制作。 segment template 尚未coding
+			15:18	已经完成static text element且正常通过Template.getImage()输出一幅图片。
+					预计后天完成整个模版梳理。
+计划完成：		添加自动下线。

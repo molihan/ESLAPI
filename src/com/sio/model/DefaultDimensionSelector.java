@@ -4,7 +4,12 @@ public class DefaultDimensionSelector implements com.sio.graphics.DimensionSelec
 	public static final int[][] DIMENSION_TABLE = new int[][]{
 																{},{250,128},{296,128},
 																{},{},{250,128},
-																{296,128},{},{}
+																{296,128},{},{},
+																{},{},{},
+																{},{},{},
+																{},{},{250,128},
+																{296,128},{},{},
+																{},{},{},
 															};
 	
 	public DefaultDimensionSelector() {

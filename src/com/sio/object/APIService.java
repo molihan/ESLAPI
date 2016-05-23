@@ -37,7 +37,7 @@ public class APIService {
 			//Client Ongoing
 			PluginThread plug = new PluginGo();
 			plug.loadAndInit();
-			plug.go();		
+			plug.go();
 			System.out.println("plugins loaded...");
 			
 			//Destroy hook

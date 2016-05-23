@@ -13,6 +13,10 @@ public class DefaultCastSettingSelector implements com.sio.graphics.CastSettingS
 																	{},{},{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},	//3,4,5
 																	{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},{},{},	//6,7,8
 																	{},{},{},	//9,10,11
+																	{},{},{},	//12,13,14
+																	{},{},{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},	//15,16,17
+																	{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},{},{},	//18,19,20
+																	{},{},{},	//21,22,23
 																};
 
 	@Override
