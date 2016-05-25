@@ -28,9 +28,13 @@ public class DefaultPackSheer implements PackSheer {
 		buf.put(_HEAD);
 //		current pack length
 		if(current_pack<total_pack-1){
-			predict_this_size = 512;
+			predict_this_size = DEFAULT_PACK_SIZE;
 		}else {
-			predict_this_size = raw_size % 512;
+			if(raw_size % DEFAULT_PACK_SIZE == 0){
+				predict_this_size = DEFAULT_PACK_SIZE;
+			} else {
+				predict_this_size = raw_size % DEFAULT_PACK_SIZE;
+			}
 		}
 		for(int x=2; x>=0; x--){
 			byte length = (byte) ((predict_this_size >> (8*x) ) & 0xFF);
@@ -55,6 +59,7 @@ public class DefaultPackSheer implements PackSheer {
 		current_pack++;
 		byte[] dst = new byte[buf.flip().remaining()];
 		buf.get(dst);
+//		System.out.println("封包大小： " + raw_size + "个字节， 当前封包：" + predict_this_size + " 个字节。");
 		return dst;
 	}
 
