@@ -30,12 +30,15 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	private static final int SECOND_IN_MILLIS = 1000;
 	private static final int A5_REND = 5;
 	private static final String UDP_PORT_OCCUPIED_ERROR = "ALL UDP PORT IS OCCUPIED.";
-	private static final String PROP_FILE_CONTENT = 	"#Set a default standing IP address. If you have more than one network cards set the value to the right route.\r\n"
+	private static final String PROP_FILE_CONTENT = 	"#Set a default net-card hardware.If you have more than one net-card or virtual machine run on OS set the value to the right route.\r\n"
 													+	"#Set this to 'auto' if you have no idea what to do.\r\n"
-													+	"ip=auto";
+													+	"#P.S. Find your net-cards' MAC address by type 'ipconfig /all' for Microsoft Windows, and 'ifconfig /all for Unix/Linux'\r\n"
+													+	"#e.g. mac=0C123456ABCD\r\n"
+													+	"\r\n"
+													+	"mac=auto";
 	private static final int INVALID_ARG_FLAG = -1;
 	private static final int _COM_PORT_ = 15167;
-	private static String standard_ip;
+	public static String standard_ip;
 	private int standard_port = INVALID_ARG_FLAG;
 	private long last_a5_pack;
 
@@ -47,7 +50,7 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 //	Properties
 	public static final Properties props = new Properties();
 	private static final File props_file = new File("./net.ini");
-	public static final String KEY_IP = "ip";
+	public static final String KEY_MAC = "mac";
 	
 	static {
 		if(props_file.exists()){
@@ -70,16 +73,7 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 				e.printStackTrace();
 			}
 		}
-		String ip = props.getProperty(KEY_IP);
-		if(ip == null || ip.length() < 7){
-			try {
-				standard_ip = Inet4Address.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			}
-		} else {
-			standard_ip = ip;
-		}
+		
 	}
 	
 	public DefaultUDPTransceiver() {
@@ -89,6 +83,18 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	@Override
 	protected DatagramChannel initialChannelHook() {
 		DatagramChannel channel = null;
+//		get netcard MAC
+		String net_hardware_mac = props.getProperty(KEY_MAC);
+		if(net_hardware_mac == null || net_hardware_mac.length() != 12){
+			try {
+				standard_ip = Inet4Address.getLocalHost().getHostAddress();						//get default ip
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+		} else {
+			standard_ip = getInet4AddressByHardwareAddress(net_hardware_mac).getHostAddress();	//get IPv4 address of the netcard
+		}
+//		open channel and bind
 		try {
 			channel = DatagramChannel.open();
 			standard_port = getFreePort(standard_ip);

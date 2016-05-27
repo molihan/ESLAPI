@@ -1,8 +1,6 @@
 package com.sio.net;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
@@ -35,24 +33,15 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 	@Override
 	protected DatagramChannel initialChannelHook() {
 		DatagramChannel channel = null;
-		String standard_ip = null;
-//		fix ip
-		{
-			standard_ip = DefaultUDPTransceiver.props.getProperty(DefaultUDPTransceiver.KEY_IP);
-			if(standard_ip == null || standard_ip.length() < 7){
-				try {
-					standard_ip = Inet4Address.getLocalHost().getHostAddress();
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		String standard_ip = DefaultUDPTransceiver.standard_ip;
+		
+		channel = getFreeChannel(standard_ip);
 		
 		if(_DEBUG_){
 			System.out.println("found free port: " + " @ip -> " + standard_ip);
 			System.out.println("################################START#######################" + new Date());
 		}
-		channel = getFreeChannel(standard_ip);
+		
 		try {
 			channel.configureBlocking(false);
 		} catch (IOException e) {

@@ -1,6 +1,7 @@
 package com.sio.ipc;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -58,7 +59,9 @@ public class PluginGo implements PluginThread {
 		}
 		
 		{
-			Collection<Terminal> terminals = ipc.getLoadedTerminals().values();
+//			init itorator
+			Collection<Terminal> terminals = cloneTerminalCollection();	
+			
 //			calculate simple rest
 			{
 				if(terminals != null && terminals.size()>0){
@@ -67,7 +70,6 @@ public class PluginGo implements PluginThread {
 				}
 			}
 			
-			_terminal_ = terminals.iterator();	//init itorator
 			if(terminals.size()>0){
 				for(int i=0; i<THREAD_LIMIT; i++){
 					if(i<terminals.size()){
@@ -100,8 +102,7 @@ public class PluginGo implements PluginThread {
 			}
 			return null;
 		} else {
-			Collection<Terminal> terminals = ipc.getLoadedTerminals().values();
-			_terminal_ = terminals.iterator();
+			cloneTerminalCollection();
 			if(_terminal_.hasNext()){
 				return _terminal_.next();
 			}
@@ -113,6 +114,13 @@ public class PluginGo implements PluginThread {
 		if(terminal != null){
 			terminal.onEvent();
 		}
+	}
+	
+	private Collection<Terminal> cloneTerminalCollection(){
+		Collection<Terminal> terminals = new HashSet<>();
+		terminals.addAll(ipc.getLoadedTerminals().values());
+		_terminal_ = terminals.iterator();
+		return terminals;
 	}
 	
 	@Override

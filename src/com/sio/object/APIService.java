@@ -1,5 +1,7 @@
 package com.sio.object;
 
+import org.apache.log4j.Logger;
+
 import com.sio.ipc.ConsoleSystem;
 import com.sio.ipc.DefaultConsole;
 import com.sio.ipc.PluginGo;
@@ -17,12 +19,22 @@ public class APIService {
 	private static final String VERSION = "2.0.1a";
 	private static final String RELEASE_DATE = "2016-03-30";
 	
+//	logger
+	private static final Logger logger = Logger.getLogger(APIService.class);
+	
 	public static void main(String[] args) {
-
 		new APIService();
 	}
 	
 	public APIService() {
+		try{
+			launchService();
+		} catch (Exception e){
+			logger.error(e.getMessage());
+		}
+	}
+	
+	private void launchService(){
 		{	
 			//create a concrete model
 			UtilityProvider.getInstance().initUtility(new AccessPointUtility());

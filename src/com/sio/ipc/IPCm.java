@@ -73,6 +73,8 @@ public class IPCm implements Loadable {
 				            				System.out.println("found incompatible plugin.[" + c.getName() + "]");
 				            			}
 				            		}
+				            	} else if (classFile.getName().endsWith(".jar")){
+				            		
 				            	}
 				            }
 						}

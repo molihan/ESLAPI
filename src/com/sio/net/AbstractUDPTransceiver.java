@@ -3,13 +3,19 @@ package com.sio.net;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.DatagramSocket;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.util.Enumeration;
+
+import com.sio.model.Packer;
 
 public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	protected static final int SELECTION_READ = SelectionKey.OP_READ;
@@ -193,6 +199,30 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	
 		}
 		return ch.isConnected()?ch:null;
+	}
+	
+	public InetAddress getInet4AddressByHardwareAddress(String hardware_address){
+		Enumeration<NetworkInterface> interfaces = null;
+		try {
+			interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()){
+				NetworkInterface netInterface = interfaces.nextElement();
+				if(netInterface.getHardwareAddress() != null)
+				if(Packer.fromBytesTo16radix(netInterface.getHardwareAddress()).equalsIgnoreCase(hardware_address)){
+					Enumeration<InetAddress> inets = netInterface.getInetAddresses();
+					while(inets.hasMoreElements()) {
+						InetAddress addr = inets.nextElement();
+						if(addr instanceof Inet4Address){
+							return addr;
+						}
+					}
+					return null;
+				}
+			}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public void finalize(){
