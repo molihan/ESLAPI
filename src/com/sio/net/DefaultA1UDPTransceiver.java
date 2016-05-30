@@ -36,7 +36,6 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 		String standard_ip = DefaultUDPTransceiver.standard_ip;
 		
 		channel = getFreeChannel(standard_ip);
-		
 		if(_DEBUG_){
 			System.out.println("found free port: " + " @ip -> " + standard_ip);
 			System.out.println("################################START#######################" + new Date());
@@ -127,4 +126,5 @@ public class DefaultA1UDPTransceiver extends AbstractUDPTransceiver {
 		aData.setData(data);
 		queue.add(aData);
 	}
+	
 }

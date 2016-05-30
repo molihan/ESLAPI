@@ -243,4 +243,24 @@ public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 		}
 		selector = null;
 	}
+	
+	@Override
+	public String getLocalIP() {
+		try {
+			return ((InetSocketAddress)datagramChannel.getLocalAddress()).getAddress().getHostAddress();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public int getLocalPort() {
+		try {
+			return ((InetSocketAddress)datagramChannel.getLocalAddress()).getPort();
+		} catch (IOException e) {
+			e.printStackTrace();
+		};
+		return -1;
+	}
 }

@@ -29,4 +29,8 @@ public interface UDPTransceiver {
 	 * Stop the UDP auto-write and auto-read event
 	 */
 	public void stopUDPEvent();
+	
+	public String getLocalIP();
+	
+	public int getLocalPort();
 }

@@ -48,26 +48,29 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 //	Logger
 	private static final Logger logger = Logger.getLogger(DefaultUDPTransceiver.class);
 //	Properties
-	public static final Properties props = new Properties();
-	private static final File props_file = new File("./net.ini");
+	public static final Properties PROPS = new Properties();
+	private static final File PROPS_FILE = new File("./config/net.ini");
 	public static final String KEY_MAC = "mac";
 	
 	static {
-		if(props_file.exists()){
+		if(PROPS_FILE.exists()){
 			try {
-				props.load(new FileReader(props_file));
+				PROPS.load(new FileReader(PROPS_FILE));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
+			if(!PROPS_FILE.getParentFile().exists()){
+				PROPS_FILE.getParentFile().mkdirs();
+			}
 			try {
-				props_file.createNewFile();
+				PROPS_FILE.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			try(FileWriter writer = new FileWriter(props_file)){
+			try(FileWriter writer = new FileWriter(PROPS_FILE)){
 				writer.write(PROP_FILE_CONTENT);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -77,14 +80,13 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	}
 	
 	public DefaultUDPTransceiver() {
-	
 	}
 
 	@Override
 	protected DatagramChannel initialChannelHook() {
 		DatagramChannel channel = null;
 //		get netcard MAC
-		String net_hardware_mac = props.getProperty(KEY_MAC);
+		String net_hardware_mac = PROPS.getProperty(KEY_MAC);
 		if(net_hardware_mac == null || net_hardware_mac.length() != 12){
 			try {
 				standard_ip = Inet4Address.getLocalHost().getHostAddress();						//get default ip
@@ -231,4 +233,13 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 		this.observable = observable;
 	}
 
+	@Override
+	public String getLocalIP() {
+		return standard_ip;
+	}
+	
+	@Override
+	public int getLocalPort() {
+		return standard_port;
+	}
 }
