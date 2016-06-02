@@ -1,7 +1,6 @@
 package com.sio.object;
 
 import org.apache.log4j.Logger;
-
 import com.sio.ipc.ConsoleSystem;
 import com.sio.ipc.DefaultConsole;
 import com.sio.ipc.PluginGo;
