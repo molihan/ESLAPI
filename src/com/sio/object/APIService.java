@@ -15,8 +15,8 @@ import com.sio.util.ImageCasterDelegatesFactory;
 import com.sio.util.UDPConnectionFactory;
 
 public class APIService {
-	private static final String VERSION = "2.0.1a";
-	private static final String RELEASE_DATE = "2016-03-30";
+	private static final String VERSION = "2.0.3a";
+	private static final String RELEASE_DATE = "2016-06-06";
 	
 //	logger
 	private static final Logger logger = Logger.getLogger(APIService.class);
@@ -64,7 +64,7 @@ public class APIService {
 			//Info
 			System.out.println("console is running...");
 			
-			System.out.println("cuurent version: " + VERSION);
+			System.out.println("cuurent core version: " + VERSION);
 			System.out.println("released date: " + RELEASE_DATE);
 //			commandLine.startGatherCommand();
 			

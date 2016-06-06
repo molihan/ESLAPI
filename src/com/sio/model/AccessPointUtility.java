@@ -38,14 +38,24 @@ public final class AccessPointUtility implements DeviceUtility{
 				InterpretedTag iTag = null;
 				if(arg instanceof InterpretedTag){
 					iTag = (InterpretedTag) arg;
+					tag.setMac(iTag.mac());
+				} else {
+					try {
+						throw new Exception("Error update pass in [com.sio.model.AccessPointUtility.update()]");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-				tag.setMac(iTag.mac());
-				tag.setTag(iTag);
+				
 				for(AbstractAccessPoint accesspoint : accesspoints){
 					if(accesspoint.equals(ap)){
+						accesspoint.setAlive(true);
 						if(accesspoint.contains(tag)){
 							accesspoint.getTag(iTag.mac()).setTag(iTag);	//refresh data
+							accesspoint.getTag(iTag.mac()).setLast_feedback(System.currentTimeMillis());
 						} else {
+							tag.setTag(iTag);
+							tag.setLast_feedback(System.currentTimeMillis());
 							accesspoint.addTag(tag);
 						}
 					} else {

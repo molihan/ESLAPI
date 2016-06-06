@@ -24,6 +24,7 @@ import com.sio.model.DataReader;
 import com.sio.model.DefaultPackSheer;
 import com.sio.model.DefaultUDPA5Pack;
 import com.sio.model.DefaultUDPAtomicData;
+import com.sio.model.Watchman;
 
 public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	private static final int DEFAULT_BUFFER_SIZE = 1024;
@@ -41,7 +42,10 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	public static String standard_ip;
 	private int standard_port = INVALID_ARG_FLAG;
 	private long last_a5_pack;
-
+//	check-offline
+	private static final int OFFLINE_CHECK_INTERVAL = 2;
+	private long lastcheck;
+	
 	private DataQueue queue;
 	private DataReader observable;
 	private ByteBuffer receive_buffer = ByteBuffer.allocate(DEFAULT_BUFFER_SIZE);
@@ -191,7 +195,14 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 			}
 			queue.putData(data);
 			last_a5_pack = System.currentTimeMillis();
+		} else if ((System.currentTimeMillis() - last_a5_pack >= (A5_REND / 2) * SECOND_IN_MILLIS) && (System.currentTimeMillis() - lastcheck) >= OFFLINE_CHECK_INTERVAL * SECOND_IN_MILLIS){
+			predict();
+			lastcheck = System.currentTimeMillis();
 		}
+	}
+
+	private void predict() {
+		new Thread(Watchman.getInstance()).start();
 	}
 
 	/**
@@ -211,6 +222,7 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 			observable.setSrc_ip(ip);
 			observable.setSrc_port(port);
 			observable.setData(data);
+			Watchman.getInstance().sign(ip);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
