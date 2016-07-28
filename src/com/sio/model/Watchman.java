@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.sio.object.APIServiceManager;
+
 public class Watchman implements Watcher {
 	private static final int OFFLINE_TAG_TIMEOUT = 120;
 	private static final int OFFLINE_AP_TIMEOUT = 20;
@@ -31,7 +33,7 @@ public class Watchman implements Watcher {
 	@Override
 	public void clear() {
 		Set<AbstractAccessPoint> aps = new HashSet<>();
-		aps.addAll(UtilityProvider.getUtility().getAccessPoints());
+		aps.addAll(APIServiceManager.getDevices().getAccessPoints());
 		for(AbstractAccessPoint ap : aps){
 			String ap_ip = ap.getIp();
 			if(System.currentTimeMillis() - prisoners.get(ap_ip) > OFFLINE_AP_TIMEOUT*MILLIS_IN_SECOND){

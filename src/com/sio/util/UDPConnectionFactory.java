@@ -1,6 +1,7 @@
 package com.sio.util;
 
-import com.sio.net.UDPTransceiver;
+import com.sio.model.net.UDPTransceiver;
+
 
 public interface UDPConnectionFactory {
 	/**

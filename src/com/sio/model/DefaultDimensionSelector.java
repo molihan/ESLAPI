@@ -8,7 +8,7 @@ public class DefaultDimensionSelector implements com.sio.graphics.DimensionSelec
 																{},{},{},
 																{},{},{},
 																{},{},{250,128},
-																{296,128},{},{},
+																{296,128},{200,200},{},
 																{},{},{},
 															};
 	

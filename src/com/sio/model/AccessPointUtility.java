@@ -11,9 +11,13 @@ import java.util.Set;
  */
 public final class AccessPointUtility implements DeviceUtility{
 
-	private static Set<AbstractAccessPoint> accesspoints;
-	public AccessPointUtility() {
-		accesspoints = new HashSet<AbstractAccessPoint>();
+	private static Set<AbstractAccessPoint> accesspoints = new HashSet<AbstractAccessPoint>();
+	
+//	instance
+	public static AccessPointUtility instance = new AccessPointUtility();
+	
+	private AccessPointUtility() {
+		
 	}
 
 	public Set<AbstractAccessPoint> getAccessPoints(){

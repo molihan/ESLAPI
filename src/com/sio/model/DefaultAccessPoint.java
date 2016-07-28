@@ -18,7 +18,7 @@ public class DefaultAccessPoint extends AbstractAccessPoint {
 
 	@Override
 	public void sendCommand(byte[] command) {
-		// TODO Auto-generated method stub
+		// TODO a command abstract communication level
 
 	}
 

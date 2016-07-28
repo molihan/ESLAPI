@@ -16,6 +16,7 @@ import java.nio.channels.Selector;
 import java.util.Enumeration;
 
 import com.sio.model.Packer;
+import com.sio.model.net.UDPTransceiver;
 
 public abstract class AbstractUDPTransceiver implements UDPTransceiver{
 	protected static final int SELECTION_READ = SelectionKey.OP_READ;

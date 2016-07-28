@@ -1,6 +1,7 @@
 package com.sio.object;
 
 import org.apache.log4j.Logger;
+
 import com.sio.ipc.ConsoleSystem;
 import com.sio.ipc.DefaultConsole;
 import com.sio.ipc.PluginGo;
@@ -8,8 +9,7 @@ import com.sio.ipc.PluginThread;
 import com.sio.model.AccessPointUtility;
 import com.sio.model.DefaultCastSettingSelector;
 import com.sio.model.DefaultDimensionSelector;
-import com.sio.model.UtilityProvider;
-import com.sio.net.UDPTransceiver;
+import com.sio.model.net.UDPTransceiver;
 import com.sio.util.DefaultUDPTransceiverFactory;
 import com.sio.util.ImageCasterDelegatesFactory;
 import com.sio.util.UDPConnectionFactory;
@@ -36,9 +36,10 @@ public class APIService {
 	private void launchService(){
 		{	
 			//create a concrete model
-			UtilityProvider.getInstance().initUtility(new AccessPointUtility());
+			APIServiceManager.setDevices(AccessPointUtility.instance);
 			UDPConnectionFactory factory = new DefaultUDPTransceiverFactory();
 			UDPTransceiver transceiver = factory.createUDPTransceiver();
+			APIServiceManager.setTransceiver(transceiver);
 			ImageCasterDelegatesFactory.setCastSettingSelector(new DefaultCastSettingSelector());
 			ImageCasterDelegatesFactory.setDimensionSelector(new DefaultDimensionSelector());
 			
