@@ -69,7 +69,7 @@ public class APIService {
 			System.out.println("released date: " + RELEASE_DATE);
 //			commandLine.startGatherCommand();
 			
-			//UDP Ongoing
+			//UDP Ongoing & asynchronize mode
 			transceiver.startUDPEvent(false);
 		}
 	}
