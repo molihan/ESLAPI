@@ -9,14 +9,25 @@ import com.sio.ipc.PluginThread;
 import com.sio.model.AccessPointUtility;
 import com.sio.model.DefaultCastSettingSelector;
 import com.sio.model.DefaultDimensionSelector;
+import com.sio.model.net.UDPScanner;
 import com.sio.model.net.UDPTransceiver;
+import com.sio.net.DefaultUDPScanner;
+import com.sio.net.DefaultUDPTransceiver;
 import com.sio.util.DefaultUDPTransceiverFactory;
 import com.sio.util.ImageCasterDelegatesFactory;
+import com.sio.util.NetFileConfigure;
 import com.sio.util.UDPConnectionFactory;
 
+/**
+ * The API </br>
+ * Call the construction function to holding the service.</br>
+ * 
+ * @author S
+ *
+ */
 public class APIService {
-	private static final String VERSION = "2.0.3a";
-	private static final String RELEASE_DATE = "2016-06-06";
+	private static final String VERSION = "2.0.5a";
+	private static final String RELEASE_DATE = "2016-07-28";
 	
 //	logger
 	private static final Logger logger = Logger.getLogger(APIService.class);
@@ -25,20 +36,34 @@ public class APIService {
 		new APIService();
 	}
 	
+	/**
+	 * This function will trigger a service start up.<br>
+	 * The object provides a service manager that could associated with this API.
+	 */
 	public APIService() {
 		try{
 			launchService();
 		} catch (Exception e){
+			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 	}
 	
+	/*
+	 * The construction function will call this function.
+	 */
 	private void launchService(){
 		{	
+			
 			//create a concrete model
 			APIServiceManager.setDevices(AccessPointUtility.instance);
 			UDPConnectionFactory factory = new DefaultUDPTransceiverFactory();
-			UDPTransceiver transceiver = factory.createUDPTransceiver();
+			//Test network 
+			UDPScanner scanner = new DefaultUDPScanner();
+			String reconIP = scanner.scanUsableUDP(DefaultUDPTransceiver._COM_PORT_);
+			NetFileConfigure.setIP(reconIP);
+			//...
+			UDPTransceiver transceiver = factory.createUDPTransceiver(NetFileConfigure.getIP());
 			APIServiceManager.setTransceiver(transceiver);
 			ImageCasterDelegatesFactory.setCastSettingSelector(new DefaultCastSettingSelector());
 			ImageCasterDelegatesFactory.setDimensionSelector(new DefaultDimensionSelector());
@@ -72,5 +97,13 @@ public class APIService {
 			//UDP Ongoing & asynchronize mode
 			transceiver.startUDPEvent(false);
 		}
+	}
+	
+	/**
+	 * Return an APIServiceManager object that inherited Utility set and transceiver set.
+	 * @return APIServiceManager.
+	 */
+	public APIServiceManager getManager(){
+		return APIServiceManager.getInstance();
 	}
 }

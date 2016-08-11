@@ -1,9 +1,5 @@
 package com.sio.net;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
@@ -13,7 +9,6 @@ import java.nio.channels.Channel;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -31,14 +26,8 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	private static final int SECOND_IN_MILLIS = 1000;
 	private static final int A5_REND = 5;
 	private static final String UDP_PORT_OCCUPIED_ERROR = "ALL UDP PORT IS OCCUPIED.";
-	private static final String PROP_FILE_CONTENT = 	"#Set a default net-card hardware.If you have more than one net-card or virtual machine run on OS set the value to the right route.\r\n"
-													+	"#Set this to 'auto' if you have no idea what to do.\r\n"
-													+	"#P.S. Find your net-cards' MAC address by type 'ipconfig /all' for Microsoft Windows, and 'ifconfig /all for Unix/Linux'\r\n"
-													+	"#e.g. mac=0C123456ABCD\r\n"
-													+	"\r\n"
-													+	"mac=auto";
 	private static final int INVALID_ARG_FLAG = -1;
-	private static final int _COM_PORT_ = 15167;
+	public static final int _COM_PORT_ = 15167;
 	public static String standard_ip;
 	private int standard_port = INVALID_ARG_FLAG;
 	private long last_a5_pack;
@@ -51,55 +40,14 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 	private ByteBuffer receive_buffer = ByteBuffer.allocate(DEFAULT_BUFFER_SIZE);
 //	Logger
 	private static final Logger logger = Logger.getLogger(DefaultUDPTransceiver.class);
-//	Properties
-	public static final Properties PROPS = new Properties();
-	private static final File PROPS_FILE = new File("./config/net.ini");
-	public static final String KEY_MAC = "mac";
 	
-	static {
-		if(PROPS_FILE.exists()){
-			try {
-				PROPS.load(new FileReader(PROPS_FILE));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			if(!PROPS_FILE.getParentFile().exists()){
-				PROPS_FILE.getParentFile().mkdirs();
-			}
-			try {
-				PROPS_FILE.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try(FileWriter writer = new FileWriter(PROPS_FILE)){
-				writer.write(PROP_FILE_CONTENT);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
-	
-	public DefaultUDPTransceiver() {
+	public DefaultUDPTransceiver(String ip) {
+		standard_ip = ip;
 	}
 
 	@Override
 	protected DatagramChannel initialChannelHook() {
 		DatagramChannel channel = null;
-//		get netcard MAC
-		String net_hardware_mac = PROPS.getProperty(KEY_MAC);
-		if(net_hardware_mac == null || net_hardware_mac.length() != 12){
-			try {
-				standard_ip = Inet4Address.getLocalHost().getHostAddress();						//get default ip
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			}
-		} else {
-			standard_ip = getInet4AddressByHardwareAddress(net_hardware_mac).getHostAddress();	//get IPv4 address of the netcard
-		}
 //		open channel and bind
 		try {
 			channel = DatagramChannel.open();

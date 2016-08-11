@@ -18,8 +18,8 @@ import com.sio.object.APIServiceManager;
 public class DefaultUDPTransceiverFactory implements UDPConnectionFactory{
 
 	@Override
-	public UDPTransceiver createUDPTransceiver() {
-		DefaultUDPTransceiver transceiver = new DefaultUDPTransceiver();	//create transceiver READ
+	public UDPTransceiver createUDPTransceiver(String ip) {
+		DefaultUDPTransceiver transceiver = new DefaultUDPTransceiver(ip);	//create transceiver READ
 		DataReader dataReader = new DataReader();							//create reader
 		Interpreter interpreter = new UDPInterpreter();						//create interpreter
 		DeviceUtility deviceUtility = APIServiceManager.getDevices();

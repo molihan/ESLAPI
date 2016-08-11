@@ -9,7 +9,7 @@ public class DefaultCastSettingSelector implements com.sio.graphics.CastSettingS
 	public static final int INVERSE = 3;
 	public static final int BPP = 4;
 	private static final int[][] DIRECTION_TABLE = new int[][]{
-																	{},{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},	//0,1,2
+																	{},{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},{DefaultImageCaster.HORIZONTAL,DefaultImageCaster.TOPRIGHT,1,0,1},	//0,1,2
 																	{},{},{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},	//3,4,5
 																	{DefaultImageCaster.VERTICAL,DefaultImageCaster.TOPLEFT,1,0,1},{},{},	//6,7,8
 																	{},{},{},	//9,10,11

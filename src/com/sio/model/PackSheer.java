@@ -9,7 +9,7 @@ public interface PackSheer {
 	public static final int DEFAULT_PACK_SIZE = 512;
 	
 	/**
-	 * 
+	 * The data been put will be cutted into several format pieces.
 	 * @param raw source data.
 	 * @param flag Major index, it helps to identify command use. e.g.0xA1
 	 */
