@@ -171,6 +171,9 @@ public class DefaultUDPTransceiver extends AbstractUDPTransceiver {
 			observable.setSrc_port(port);
 			observable.setData(data);
 			Watchman.getInstance().sign(ip);
+			if(DataReader.HANDSET_PACK_PROTOCAL_HEAD == data[0]){
+				write(ip, port, new byte[]{DataReader.HANDSET_PACK_PROTOCAL_HEAD,data[1],data[2],data[3],data[4],0x01,(byte) 0xE5});
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

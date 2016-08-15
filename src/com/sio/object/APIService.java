@@ -61,7 +61,7 @@ public class APIService {
 			//Test network 
 			UDPScanner scanner = new DefaultUDPScanner();
 			String reconIP = scanner.scanUsableUDP(DefaultUDPTransceiver._COM_PORT_);
-			NetFileConfigure.setIP(reconIP);
+			new NetFileConfigure().setIP(reconIP);
 			//...
 			UDPTransceiver transceiver = factory.createUDPTransceiver(NetFileConfigure.getIP());
 			APIServiceManager.setTransceiver(transceiver);

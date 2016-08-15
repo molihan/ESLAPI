@@ -54,7 +54,7 @@ public class NetFileConfigure {
 		return mac;
 	}
 	
-	public static void setIP(String ip){
+	public void setIP(String ip){
 		PROPS.setProperty(KEY_IP, ip);
 		try(FileWriter writer = new FileWriter(PROPS_FILE)){
 			PROPS.store(writer, PROP_FILE_COMMENT);

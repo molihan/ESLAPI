@@ -5,6 +5,8 @@ import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.sio.net.DefaultUDPTransceiver;
+
 /**
  * 继承了Observable的解释器，可以把接收到数据转化并通知下去。
  * @author S
@@ -13,7 +15,8 @@ import java.util.concurrent.Executors;
 public class DataReader extends Observable{
 	private static final int THREAD_LIMIT = 1;
 	private static final int A4_PACK_PROTOCAL_LENGTH = 14;
-	private static final byte A4_PACK_PROTOCAL_HEAD = (byte) 0xA4;
+	public static final byte HANDSET_PACK_PROTOCAL_HEAD = (byte) 0x02;
+	public static final byte A4_PACK_PROTOCAL_HEAD = (byte) 0xA4;
 	private static final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_LIMIT);
 
 	private String src_ip;
@@ -77,6 +80,41 @@ public class DataReader extends Observable{
 					genTag.setData(buf.array());
 					threadPool.execute(genTag);
 				}
+			}
+		} else if (HANDSET_PACK_PROTOCAL_HEAD == data[0]) {
+			if(data.length>7){
+				int pack_count = 0;		//total count of pack
+				int pack_index = 0;		//current index of pack
+				{
+					pack_count = data[1] & 0xFF;
+					pack_count <<= 8;
+					pack_count |= data[2] & 0xFF;
+					pack_index = data[3] & 0xFF;
+					pack_index <<= 8;
+					pack_index |= data[4] & 0xFF;
+				}
+				System.out.println("device echo：" + Packer.fromBytesTo16radix(data));
+				
+				{
+					ByteBuffer buff = ByteBuffer.allocate(1024);
+					buff.put(data, 5, data.length-5);
+					buff.flip();
+					for(int x=0; x<buff.limit();){
+						int product_num_length = buff.get() & 0xFF;
+						int mac_length = buff.get() & 0xFF;
+						buff.get();
+						byte[] product_id = new byte[product_num_length];
+						byte[] mac = new byte[mac_length];
+						buff.get(product_id);
+						buff.get(mac);
+						System.out.println("inbuf p echo：" + Packer.fromBytesTo16radix(product_id));
+						System.out.println("inbuf m echo：" + Packer.fromBytesTo16radix(mac));
+						x += product_num_length + mac_length + 1 + 2;
+					}
+					
+				}
+				
+				
 			}
 		}
 	}
